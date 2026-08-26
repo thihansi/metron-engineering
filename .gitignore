@@ -1,0 +1,9 @@
+# Local agent / tooling
+.claude/
+
+# macOS
+.DS_Store
+
+# Design reference assets (not part of the app)
+ReferenceFiles/
+LogoFiles/

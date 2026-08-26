@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: metron_db
+      POSTGRES_USER: metron
+      POSTGRES_PASSWORD: metron_dev_pass
+    ports:
+      - "5434:5432"
+    volumes:
+      - metron_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U metron -d metron_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  metron_pgdata:
