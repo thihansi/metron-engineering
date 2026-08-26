@@ -82,6 +82,38 @@ export const HomePage: GlobalConfig = {
         { name: 'whyStatSuffix', type: 'text', label: 'Key stat suffix', defaultValue: '%' },
         { name: 'whyStatLabel', type: 'text', label: 'Key stat label', defaultValue: 'Documentation issued on schedule' },
         { name: 'whyImageUrl', type: 'text', label: 'Background image URL', defaultValue: 'https://images.unsplash.com/photo-1591645321243-3adc1e75cfdc?auto=format&fit=crop&w=1800&q=70' },
+        {
+          name: 'whyReasons',
+          type: 'array',
+          label: 'Reason cards',
+          fields: [
+            { name: 'no', type: 'text', required: true },
+            { name: 'title', type: 'text', required: true },
+            { name: 'body', type: 'textarea', required: true },
+          ],
+          defaultValue: [
+            {
+              no: 'A',
+              title: 'Analysis-led design',
+              body: 'Load paths verified in FEA before detailing, so the model that goes to fabrication is the model that was checked.',
+            },
+            {
+              no: 'B',
+              title: 'Fabrication-aware detailing',
+              body: 'Detailers who understand shop constraints reduce RFIs, rework and site fit-up issues.',
+            },
+            {
+              no: 'C',
+              title: 'Compliance as standard',
+              body: 'Documentation aligned to AS/NZS codes, WA mining regulations and client QA systems.',
+            },
+            {
+              no: 'D',
+              title: 'Perth-based, nationally engaged',
+              body: 'A local team with the mobility and systems to support projects anywhere in Australia.',
+            },
+          ],
+        },
       ],
     },
     {
@@ -90,7 +122,19 @@ export const HomePage: GlobalConfig = {
       fields: [
         { name: 'ctaHeading', type: 'text', label: 'CTA heading', defaultValue: 'Send us the scope. We will come back with an approach and a price.' },
         { name: 'ctaSubtitle', type: 'text', label: 'CTA subtitle', defaultValue: 'Get a quote — typically within two business days' },
+        { name: 'ctaButtonLabel', type: 'text', label: 'Primary button label', defaultValue: 'Start an enquiry' },
+        { name: 'ctaButtonHref', type: 'text', label: 'Primary button href', defaultValue: '/contact' },
         { name: 'ctaNote', type: 'text', label: 'CTA footer note', defaultValue: 'Shelley, Western Australia' },
+        {
+          name: 'ctaFootNotes',
+          type: 'array',
+          label: 'CTA foot notes (after primary note)',
+          fields: [{ name: 'text', type: 'text', required: true }],
+          defaultValue: [
+            { text: 'Australia-wide support' },
+            { text: 'AS/NZS compliant documentation' },
+          ],
+        },
       ],
     },
   ],

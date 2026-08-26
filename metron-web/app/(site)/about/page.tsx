@@ -1,9 +1,15 @@
+import type { Metadata } from 'next'
 import { getPayload } from '@/lib/payload'
 import { RevealWrapper } from '@/components/ui/RevealWrapper'
 import { InnerHero } from '@/components/ui/InnerHero'
 import { AnimatedCounter } from '@/components/ui/AnimatedCounter'
 import { SectionLabel } from '@/components/ui/SectionLabel'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'About | Metron Engineering Services',
+  description: 'Perth-based structural, mechanical and civil engineering firm with experience in mining, industrial, infrastructure and commercial sectors.',
+}
 
 function parseStat(raw: string | undefined | null, label: string) {
   const s = raw?.trim() || '0'
@@ -54,7 +60,14 @@ export default async function AboutPage() {
   let prodBody2 = ''
   let prodCta = ''
   let prodImageUrl = ''
-  let ctaHeading = ''
+  let ctaEyebrow = 'Final Call to Action'
+  let ctaHeading = 'Have a project in mind?'
+  let ctaBody =
+    'Talk to Metron Engineering about your engineering, design, drafting or fabrication requirements. Whether you need support with an initial concept, detailed engineering, fabrication documentation or a complete engineered solution, our team can help move your project forward.'
+  let ctaPrimaryLabel = 'Discuss Your Project'
+  let ctaPrimaryHref = '/quote'
+  let ctaSecondaryLabel = 'View Our Projects'
+  let ctaSecondaryHref = '/projects'
   let capabilities: { no: string; title: string; body: string }[] = []
   let industries: { no: string; title: string; body: string; img: string }[] = []
   let tools: { name: string; use: string }[] = []
@@ -113,7 +126,13 @@ export default async function AboutPage() {
     prodBody2 = str('productCtaBody2')
     prodCta = str('productCtaLabel')
     prodImageUrl = str('productCtaImageUrl')
-    ctaHeading = str('ctaHeading')
+    ctaEyebrow = str('ctaEyebrow') || ctaEyebrow
+    ctaHeading = str('ctaHeading') || ctaHeading
+    ctaBody = str('ctaBody') || ctaBody
+    ctaPrimaryLabel = str('ctaPrimaryLabel') || ctaPrimaryLabel
+    ctaPrimaryHref = str('ctaPrimaryHref') || ctaPrimaryHref
+    ctaSecondaryLabel = str('ctaSecondaryLabel') || ctaSecondaryLabel
+    ctaSecondaryHref = str('ctaSecondaryHref') || ctaSecondaryHref
 
     capabilities = capsRes.docs.map((c) => ({
       no: c.no,
@@ -524,6 +543,19 @@ export default async function AboutPage() {
         <RevealWrapper
           style={{ position: 'relative', maxWidth: '1360px', margin: '0 auto', padding: '0 44px', textAlign: 'center' }}
         >
+          <div
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: '13px',
+              fontWeight: 600,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: '#8fb4e0',
+              marginBottom: '18px',
+            }}
+          >
+            {ctaEyebrow}
+          </div>
           <h2
             style={{
               margin: '0 auto',
@@ -539,9 +571,21 @@ export default async function AboutPage() {
           >
             {ctaHeading}
           </h2>
+          <p
+            style={{
+              margin: '24px auto 0',
+              maxWidth: '660px',
+              fontFamily: 'var(--font-sans)',
+              fontSize: '17px',
+              lineHeight: 1.6,
+              color: 'rgba(255,255,255,0.72)',
+            }}
+          >
+            {ctaBody}
+          </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center', marginTop: '38px' }}>
             <Link
-              href="/quote"
+              href={ctaPrimaryHref}
               className="mtr-btn-light"
               style={{
                 display: 'inline-flex',
@@ -556,10 +600,10 @@ export default async function AboutPage() {
                 clipPath: 'polygon(0 0,100% 0,100% 66%,calc(100% - 16px) 100%,0 100%)',
               }}
             >
-              Get a quote
+              {ctaPrimaryLabel}
             </Link>
             <Link
-              href="/projects"
+              href={ctaSecondaryHref}
               className="mtr-btn-ghost"
               style={{
                 display: 'inline-flex',
@@ -573,7 +617,7 @@ export default async function AboutPage() {
                 fontWeight: 600,
               }}
             >
-              See our projects
+              {ctaSecondaryLabel}
             </Link>
           </div>
         </RevealWrapper>

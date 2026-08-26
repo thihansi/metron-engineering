@@ -1,17 +1,46 @@
+import type { Metadata } from 'next'
 import { getPayload } from '@/lib/payload'
 import { ContactForm } from '@/components/home/ContactForm'
 import { InnerHero } from '@/components/ui/InnerHero'
 import Link from 'next/link'
 
+export const metadata: Metadata = {
+  title: 'Contact | Metron Engineering Services',
+  description: 'Get in touch with Metron Engineering Services in Shelley, Western Australia. Phone, email and office address for enquiries, quotes and live project support.',
+}
+
+type DetailCell = { label: string; value: string; note: string }
+type RoutingRow = {
+  area: string
+  detail: string
+  href: string
+  label: string
+  linkType: 'internal' | 'mailto' | 'external'
+}
+
 export default async function ContactPage() {
+  let heroLabel = 'Contact'
+  let heroBadgeRight = 'Shelley, Western Australia'
   let heroHeading = ''
   let heroBody = ''
+  let heroQuoteLabel = 'Request a quote ⟶'
   let formSectionTitle = ''
   let formSubheading = ''
   let successMessage = ''
+  let findUsHeading = 'Find us'
+  let findUsBody = 'Visits are by appointment. For a specific person or team, see the routing below.'
+  let quoteCtaHeading = 'Have a scope ready?'
+  let quoteCtaBody =
+    'Send drawings, specifications or a short description and we will come back with an approach, programme and fee.'
+  let quoteCtaLabel = 'Get a quote ⟶'
+  let quoteCtaHref = '/quote'
   let email = ''
   let phone = ''
   let address = ''
+  let officeLabel = 'Shelley, Western Australia'
+  let coverageLabel = 'Australia-wide'
+  let detailsCells: DetailCell[] = []
+  let routingRows: RoutingRow[] = []
 
   try {
     const payload = await getPayload()
@@ -19,35 +48,95 @@ export default async function ContactPage() {
       payload.findGlobal({ slug: 'contact-page' }),
       payload.findGlobal({ slug: 'site-settings' }),
     ])
-    const p = pg as Record<string, string>
-    heroHeading = p.heroHeading ?? ''
-    heroBody = p.heroBody ?? ''
-    formSectionTitle = p.formSectionTitle ?? ''
-    formSubheading = p.formSubheading ?? ''
-    successMessage = p.formSuccessMessage ?? ''
+    const p = pg as Record<string, unknown>
     const s = settings as Record<string, string>
+    const str = (k: string, fallback = '') => (typeof p[k] === 'string' ? (p[k] as string) : fallback)
+
+    heroLabel = str('heroLabel', heroLabel)
+    heroBadgeRight = str('heroBadgeRight', heroBadgeRight)
+    heroHeading = str('heroHeading')
+    heroBody = str('heroBody')
+    heroQuoteLabel = str('heroQuoteLabel', heroQuoteLabel)
+    formSectionTitle = str('formSectionTitle')
+    formSubheading = str('formSubheading')
+    successMessage = str('formSuccessMessage')
+    findUsHeading = str('findUsHeading', findUsHeading)
+    findUsBody = str('findUsBody', findUsBody)
+    quoteCtaHeading = str('quoteCtaHeading', quoteCtaHeading)
+    quoteCtaBody = str('quoteCtaBody', quoteCtaBody)
+    quoteCtaLabel = str('quoteCtaLabel', quoteCtaLabel)
+    quoteCtaHref = str('quoteCtaHref', quoteCtaHref)
+
     email = s.email ?? ''
     phone = s.phone ?? ''
     address = s.address ?? ''
+    officeLabel = s.officeLabel ?? officeLabel
+    coverageLabel = s.coverageLabel ?? coverageLabel
+
+    const valueMap: Record<string, string> = {
+      phone,
+      email,
+      officeLabel,
+      coverageLabel,
+    }
+
+    if (Array.isArray(p.detailCells)) {
+      detailsCells = p.detailCells
+        .map((row) => {
+          if (!row || typeof row !== 'object') return null
+          const cell = row as { label?: unknown; value?: unknown; note?: unknown; valueKey?: unknown }
+          if (typeof cell.label !== 'string') return null
+          const key = typeof cell.valueKey === 'string' ? cell.valueKey : 'custom'
+          const value =
+            key !== 'custom' && valueMap[key]
+              ? valueMap[key]
+              : typeof cell.value === 'string'
+                ? cell.value
+                : ''
+          return {
+            label: cell.label,
+            value,
+            note: typeof cell.note === 'string' ? cell.note : '',
+          }
+        })
+        .filter((x): x is DetailCell => x !== null)
+    }
+
+    if (Array.isArray(p.routingRows)) {
+      routingRows = p.routingRows
+        .map((row) => {
+          if (!row || typeof row !== 'object') return null
+          const r = row as {
+            area?: unknown
+            detail?: unknown
+            href?: unknown
+            label?: unknown
+            linkType?: unknown
+          }
+          if (
+            typeof r.area !== 'string' ||
+            typeof r.detail !== 'string' ||
+            typeof r.href !== 'string' ||
+            typeof r.label !== 'string'
+          ) {
+            return null
+          }
+          const linkType =
+            r.linkType === 'mailto' || r.linkType === 'external' || r.linkType === 'internal'
+              ? r.linkType
+              : 'internal'
+          let href = r.href
+          if (linkType === 'mailto') {
+            href = href.startsWith('mailto:') && href.length > 7 ? href : `mailto:${email}`
+          }
+          return { area: r.area, detail: r.detail, href, label: r.label, linkType }
+        })
+        .filter((x): x is RoutingRow => x !== null)
+    }
   } catch { /* CMS unavailable */ }
 
   const telHref = `tel:${phone.replace(/\s/g, '')}`
-  const mailHref = `mailto:${email}`
   const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`
-
-  const routingRows = [
-    { area: 'New work and quotes', detail: 'Scope, drawings, programme and fees', href: '/quote', label: 'Quote form ⟶', internal: true },
-    { area: 'Metron Specials products', detail: 'Availability, specifications and pricing', href: '/products', label: 'View range ⟶', internal: true },
-    { area: 'Live projects', detail: 'Site queries, revisions and documentation', href: mailHref, label: 'Email us ⟶', internal: false },
-    { area: 'Careers', detail: 'Engineers and detailers — send a CV any time', href: mailHref, label: 'Email us ⟶', internal: false },
-  ]
-
-  const detailsCells = [
-    { label: 'Phone', value: phone, note: 'Mon – Fri, 7:30 am – 5:00 pm AWST' },
-    { label: 'Email', value: email, note: 'Replies within one business day' },
-    { label: 'Office', value: 'Shelley, Western Australia', note: 'Visits by appointment' },
-    { label: 'Coverage', value: 'Australia-wide', note: 'Remote and on-site engineering support' },
-  ]
 
   const headingStyle: React.CSSProperties = {
     margin: 0,
@@ -69,8 +158,8 @@ export default async function ContactPage() {
   return (
     <>
       <InnerHero
-        badgeLeft="Contact"
-        badgeRight="Shelley, Western Australia"
+        badgeLeft={heroLabel}
+        badgeRight={heroBadgeRight}
         heading={heroHeading}
         body={heroBody}
         bodyMaxWidth={620}
@@ -96,7 +185,7 @@ export default async function ContactPage() {
             {phone}
           </a>
           <Link
-            href="/quote"
+            href={quoteCtaHref}
             className="mtr-btn-ghost"
             style={{
               display: 'inline-flex',
@@ -110,12 +199,11 @@ export default async function ContactPage() {
               fontSize: '15px',
             }}
           >
-            Request a quote ⟶
+            {heroQuoteLabel}
           </Link>
         </div>
       </InnerHero>
 
-      {/* 4-cell contact details bar */}
       <section style={{ background: '#fff', borderBottom: '1px solid #e4e7eb' }}>
         <div className="mtr-wrap">
           <div
@@ -142,19 +230,15 @@ export default async function ContactPage() {
         </div>
       </section>
 
-      {/* Find us + Send a message */}
       <section style={{ background: '#f5f7f9', padding: '100px 0 110px', borderBottom: '1px solid #e4e7eb' }}>
         <div className="mtr-wrap">
           <div
             className="mtr-2col"
             style={{ border: '1px solid #e4e7eb', background: '#e4e7eb', gap: '1px', alignItems: 'stretch' }}
           >
-            {/* Find us */}
             <div className="mtr-contact-panel">
-              <h2 style={headingStyle}>Find us</h2>
-              <p style={subStyle}>
-                Visits are by appointment. For a specific person or team, see the routing below.
-              </p>
+              <h2 style={headingStyle}>{findUsHeading}</h2>
+              <p style={subStyle}>{findUsBody}</p>
 
               <div style={{ position: 'relative', overflow: 'hidden', border: '1px solid #e4e7eb' }}>
                 <iframe
@@ -183,7 +267,7 @@ export default async function ContactPage() {
                         {row.detail}
                       </div>
                     </div>
-                    {row.internal ? (
+                    {row.linkType === 'internal' ? (
                       <Link href={row.href} className="mtr-route-link" style={{ flexShrink: 0, whiteSpace: 'nowrap', fontFamily: 'var(--font-archivo)', fontWeight: 600, fontSize: '13px' }}>
                         {row.label}
                       </Link>
@@ -197,12 +281,11 @@ export default async function ContactPage() {
               </div>
             </div>
 
-            {/* Send a message */}
             <div id="message" className="mtr-contact-panel">
               <h2 style={headingStyle}>{formSectionTitle}</h2>
               <p style={subStyle}>
                 {formSubheading}{' '}Requesting a price? Use the{' '}
-                <Link href="/quote" style={{ color: '#2e76c2', fontWeight: 600 }}>quote form</Link>
+                <Link href={quoteCtaHref} style={{ color: '#2e76c2', fontWeight: 600 }}>quote form</Link>
                 {' '}instead so nothing gets missed.
               </p>
               <ContactForm successMessage={successMessage} />
@@ -211,7 +294,6 @@ export default async function ContactPage() {
         </div>
       </section>
 
-      {/* CTA — Have a scope ready? */}
       <section style={{ position: 'relative', background: '#0b1c33', overflow: 'hidden', padding: '96px 0 100px' }}>
         <div style={{
           position: 'absolute', inset: 0,
@@ -225,14 +307,14 @@ export default async function ContactPage() {
         <div className="mtr-wrap" style={{ position: 'relative', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-end', gap: '40px' }}>
           <div>
             <h2 style={{ margin: 0, maxWidth: '640px', fontFamily: 'var(--font-archivo)', fontWeight: 800, fontSize: 'clamp(28px,3.2vw,44px)', lineHeight: 1.08, letterSpacing: '-0.03em', color: '#fff' }}>
-              Have a scope ready?
+              {quoteCtaHeading}
             </h2>
             <p style={{ margin: '18px 0 0', maxWidth: '560px', fontSize: '17px', lineHeight: 1.66, color: 'rgba(255,255,255,0.72)' }}>
-              Send drawings, specifications or a short description and we will come back with an approach, programme and fee.
+              {quoteCtaBody}
             </p>
           </div>
           <Link
-            href="/quote"
+            href={quoteCtaHref}
             className="mtr-cta-btn"
             style={{
               display: 'inline-flex',
@@ -247,7 +329,7 @@ export default async function ContactPage() {
               clipPath: 'polygon(0 0,100% 0,100% 66%,calc(100% - 16px) 100%,0 100%)',
             }}
           >
-            Get a quote ⟶
+            {quoteCtaLabel}
           </Link>
         </div>
       </section>

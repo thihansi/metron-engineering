@@ -26,6 +26,7 @@ export function HeroSection({
   cta2Label,
   imageUrl,
 }: HeroSectionProps) {
+  const sectionRef = useRef<HTMLElement>(null)
   const scanRef = useRef<HTMLDivElement>(null)
   const parallaxRef = useRef<HTMLDivElement>(null)
 
@@ -42,8 +43,10 @@ export function HeroSection({
     }
     window.addEventListener('scroll', onScroll, { passive: true })
 
-    // Animate heading letters
-    document.querySelectorAll<HTMLElement>('[data-split]').forEach((el) => {
+    // Animate heading letters — scoped to this section to avoid matching other [data-split] elements
+    const container = sectionRef.current
+    if (!container) return
+    container.querySelectorAll<HTMLElement>('[data-split]').forEach((el) => {
       if (el.dataset.done) return
       el.dataset.done = '1'
       const splitIndex = parseInt(el.dataset.split ?? '0', 10)
@@ -66,6 +69,7 @@ export function HeroSection({
 
   return (
     <section
+      ref={sectionRef}
       id="top"
       style={{
         position: 'relative',

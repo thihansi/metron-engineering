@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import type { NavLink } from '@/types'
 
-const NAV_LINKS: NavLink[] = [
+const DEFAULT_NAV: NavLink[] = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
   { label: 'Services', href: '/services' },
@@ -14,10 +14,21 @@ const NAV_LINKS: NavLink[] = [
   { label: 'Contact', href: '/contact' },
 ]
 
-export function Header() {
+interface HeaderProps {
+  navLinks?: NavLink[]
+  quoteCtaLabel?: string
+  quoteCtaHref?: string
+}
+
+export function Header({
+  navLinks = DEFAULT_NAV,
+  quoteCtaLabel = 'Get a Quote',
+  quoteCtaHref = '/quote',
+}: HeaderProps) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const progressRef = useRef<HTMLDivElement>(null)
+  const links = navLinks.length > 0 ? navLinks : DEFAULT_NAV
 
   useEffect(() => {
     const onScroll = () => {
@@ -37,7 +48,6 @@ export function Header() {
 
   return (
     <>
-      {/* Scroll progress bar */}
       <div
         ref={progressRef}
         style={{
@@ -82,18 +92,17 @@ export function Header() {
             <Image
               src={scrolled ? '/logo-dark.svg' : '/logo-white.svg'}
               alt="Metron Engineering"
-              width={160}
-              height={32}
-              style={{ height: '32px', width: 'auto', display: 'block' }}
+              width={200}
+              height={46}
+              style={{ height: '36px', width: 'auto', display: 'block' }}
               priority
             />
           </Link>
 
-          {/* Desktop nav */}
           <nav style={{ display: 'flex', alignItems: 'center', gap: '6px' }} className="hidden-mobile">
-            {NAV_LINKS.map((link) => (
+            {links.map((link) => (
               <Link
-                key={link.href}
+                key={link.href + link.label}
                 href={link.href}
                 className="mtr-nav-link"
                 style={{
@@ -109,7 +118,7 @@ export function Header() {
               </Link>
             ))}
             <Link
-              href="/quote"
+              href={quoteCtaHref}
               className="mtr-nav-cta"
               style={{
                 position: 'relative',
@@ -129,14 +138,15 @@ export function Header() {
               }}
             >
               <span style={{ position: 'absolute', inset: 0, background: 'linear-gradient(100deg,transparent,rgba(255,255,255,0.34),transparent)', animation: 'mtrSweep 3.6s linear infinite', pointerEvents: 'none' }} />
-              Get a Quote
+              {quoteCtaLabel}
             </Link>
           </nav>
 
-          {/* Mobile hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-nav"
             style={{
               display: 'none',
               background: 'none',
@@ -161,18 +171,18 @@ export function Header() {
           </button>
         </div>
 
-        {/* Mobile menu */}
         {mobileOpen && (
           <div
+            id="mobile-nav"
             style={{
               background: '#ffffff',
               borderTop: '1px solid #e4e7eb',
               padding: '16px 24px 24px',
             }}
           >
-            {NAV_LINKS.map((link) => (
+            {links.map((link) => (
               <Link
-                key={link.href}
+                key={link.href + link.label}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
                 style={{
@@ -189,7 +199,7 @@ export function Header() {
               </Link>
             ))}
             <Link
-              href="/quote"
+              href={quoteCtaHref}
               onClick={() => setMobileOpen(false)}
               style={{
                 display: 'block',
@@ -203,7 +213,7 @@ export function Header() {
                 textAlign: 'center',
               }}
             >
-              Get a Quote
+              {quoteCtaLabel}
             </Link>
           </div>
         )}

@@ -20,6 +20,18 @@ function createTransporter() {
   })
 }
 
+function escHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+function safeDisplayName(name: string): string {
+  return name.replace(/[\\"]/g, (c) => `\\${c}`)
+}
+
 const BASE_STYLES = `
   font-family: 'Helvetica Neue', Arial, sans-serif;
   font-size: 15px;
@@ -29,13 +41,14 @@ const BASE_STYLES = `
 
 function field(label: string, value: string | undefined) {
   if (!value) return ''
+  const safe = escHtml(value).replace(/\n/g, '<br>')
   return `
     <tr>
       <td style="padding:10px 16px;border-bottom:1px solid #e4e7eb;font-weight:600;font-size:12px;letter-spacing:0.04em;text-transform:uppercase;color:#7c848e;white-space:nowrap;vertical-align:top;width:160px">
         ${label}
       </td>
       <td style="padding:10px 16px;border-bottom:1px solid #e4e7eb;color:#16191e;vertical-align:top">
-        ${value.replace(/\n/g, '<br>')}
+        ${safe}
       </td>
     </tr>
   `
@@ -57,7 +70,7 @@ function layout(subject: string, rows: string) {
               Metron Engineering Services
             </p>
             <p style="margin:8px 0 0;font-size:20px;font-weight:700;color:#ffffff">
-              ${subject}
+              ${escHtml(subject)}
             </p>
           </td>
         </tr>
@@ -107,7 +120,7 @@ export async function sendContactNotification(data: ContactEmailData) {
   await createTransporter().sendMail({
     from,
     to,
-    replyTo: `"${data.name}" <${data.email}>`,
+    replyTo: `"${safeDisplayName(data.name)}" <${data.email}>`,
     subject: `Contact: ${data.name}`,
     html,
     text: `Name: ${data.name}\nEmail: ${data.email}\n\nMessage:\n${data.message}`,
@@ -133,7 +146,7 @@ export async function sendQuoteNotification(data: QuoteEmailData) {
   const from = `"Metron Website" <${process.env.SMTP_FROM ?? process.env.SMTP_USER}>`
 
   const attachmentList = data.attachments?.length
-    ? data.attachments.map(a => `${a.filename} (${a.size})`).join('<br>')
+    ? data.attachments.map(a => `${escHtml(a.filename)} (${escHtml(a.size)})`).join('<br>')
     : undefined
 
   const html = layout(
@@ -164,7 +177,7 @@ export async function sendQuoteNotification(data: QuoteEmailData) {
   await createTransporter().sendMail({
     from,
     to,
-    replyTo: `"${data.name}" <${data.email}>`,
+    replyTo: `"${safeDisplayName(data.name)}" <${data.email}>`,
     subject: `Quote request: ${data.name}${data.company ? ` — ${data.company}` : ''}`,
     html,
     text: textLines,

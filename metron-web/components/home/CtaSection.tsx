@@ -6,6 +6,9 @@ interface CtaSectionProps {
   subtitle: string
   note?: string
   email?: string
+  buttonLabel?: string
+  buttonHref?: string
+  footNotes?: string[]
 }
 
 export function CtaSection({
@@ -13,7 +16,12 @@ export function CtaSection({
   subtitle,
   note,
   email = 'sam@metronengineering.com.au',
+  buttonLabel = 'Start an enquiry',
+  buttonHref = '/contact',
+  footNotes = [],
 }: CtaSectionProps) {
+  const notes = [note, ...footNotes].filter(Boolean) as string[]
+
   return (
     <section id="contact" className="mtr-section" style={{ position: 'relative', background: '#fff', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '1100px', height: '1100px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(46,118,194,0.10) 0%,transparent 62%)' }} />
@@ -29,11 +37,11 @@ export function CtaSection({
         </h2>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center', marginTop: '48px' }}>
           <Link
-            href="/contact"
+            href={buttonHref}
             className="mtr-cta-btn"
             style={{ display: 'inline-flex', alignItems: 'center', height: '60px', padding: '0 40px', background: '#0b1c33', color: '#fff', fontFamily: 'var(--font-archivo)', fontSize: '16px', fontWeight: 700, clipPath: 'polygon(0 0,100% 0,100% 66%,calc(100% - 18px) 100%,0 100%)' }}
           >
-            Start an enquiry
+            {buttonLabel}
           </Link>
           <a
             href={`mailto:${email}`}
@@ -43,13 +51,16 @@ export function CtaSection({
             {email}
           </a>
         </div>
-        {note && (
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '44px', marginTop: '56px', fontFamily: 'var(--font-archivo)', fontWeight: 600, fontSize: '11.5px', letterSpacing: '0.045em', textTransform: 'uppercase', color: '#8b929b', flexWrap: 'wrap' }}>
-            <span>{note}</span>
-            <span style={{ color: '#2e76c2' }}>◆</span>
-            <span>Australia-wide support</span>
-            <span style={{ color: '#2e76c2' }}>◆</span>
-            <span>AS/NZS compliant documentation</span>
+        {notes.length > 0 && (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '44px', marginTop: '56px', fontFamily: 'var(--font-archivo)', fontWeight: 600, fontSize: '11.5px', letterSpacing: '0.045em', textTransform: 'uppercase', color: '#8b929b', flexWrap: 'wrap' }}>
+            {notes.flatMap((n, i) =>
+              i === 0
+                ? [<span key={`${n}-${i}`}>{n}</span>]
+                : [
+                    <span key={`sep-${i}`} style={{ color: '#2e76c2' }}>◆</span>,
+                    <span key={`${n}-${i}`}>{n}</span>,
+                  ],
+            )}
           </div>
         )}
       </RevealWrapper>

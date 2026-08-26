@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getPayload } from '@/lib/payload'
 import { ProductsDrawer, type CmsProduct } from '@/components/home/ProductsDrawer'
 import { InnerHero } from '@/components/ui/InnerHero'
@@ -31,6 +32,11 @@ function toCmsProduct(doc: Record<string, unknown>): CmsProduct {
       ? (doc.options as { option?: string }[]).map((o) => ({ option: o.option ?? '' }))
       : null,
   }
+}
+
+export const metadata: Metadata = {
+  title: 'Metron Specials | Engineered Access & Ventilation Products',
+  description: 'Metron Specials — a range of engineered access hatches, ventilation and fabricated products designed and manufactured in Perth.',
 }
 
 export default async function ProductsPage() {

@@ -19,6 +19,19 @@ export const SiteSettings: GlobalConfig = {
       defaultValue: 'Engineering that holds up under load.',
     },
     {
+      name: 'metaTitle',
+      type: 'text',
+      label: 'SEO title',
+      defaultValue: 'Metron Engineering Services',
+    },
+    {
+      name: 'metaDescription',
+      type: 'textarea',
+      label: 'SEO description',
+      defaultValue:
+        'Structural, mechanical, civil and architectural engineering for mining, industrial, infrastructure and commercial clients.',
+    },
+    {
       name: 'footerBlurb',
       type: 'textarea',
       label: 'Footer blurb',
@@ -37,6 +50,50 @@ export const SiteSettings: GlobalConfig = {
       defaultValue: 'Designed and documented to AS/NZS standards',
     },
     {
+      name: 'navLinks',
+      type: 'array',
+      label: 'Header navigation links',
+      fields: [
+        { name: 'label', type: 'text', required: true },
+        { name: 'href', type: 'text', required: true },
+      ],
+      defaultValue: [
+        { label: 'Home', href: '/' },
+        { label: 'About', href: '/about' },
+        { label: 'Services', href: '/services' },
+        { label: 'Products', href: '/products' },
+        { label: 'Projects', href: '/projects' },
+        { label: 'Contact', href: '/contact' },
+      ],
+    },
+    {
+      name: 'quoteCtaLabel',
+      type: 'text',
+      label: 'Header quote CTA label',
+      defaultValue: 'Get a Quote',
+    },
+    {
+      name: 'quoteCtaHref',
+      type: 'text',
+      label: 'Header quote CTA href',
+      defaultValue: '/quote',
+    },
+    {
+      name: 'footerCompanyLinks',
+      type: 'array',
+      label: 'Footer company links',
+      fields: [
+        { name: 'label', type: 'text', required: true },
+        { name: 'href', type: 'text', required: true },
+      ],
+      defaultValue: [
+        { label: 'About', href: '/about' },
+        { label: 'Services', href: '/services' },
+        { label: 'Projects', href: '/projects' },
+        { label: 'Products', href: '/products' },
+      ],
+    },
+    {
       name: 'footerDisciplines',
       type: 'array',
       label: 'Footer discipline links',
@@ -44,15 +101,18 @@ export const SiteSettings: GlobalConfig = {
         { name: 'label', type: 'text', required: true },
         { name: 'href', type: 'text', required: true },
       ],
+      defaultValue: [
+        { label: 'Structural', href: '/services' },
+        { label: 'Mechanical', href: '/services' },
+        { label: 'FEA analysis', href: '/services' },
+        { label: 'Steel detailing', href: '/services' },
+      ],
     },
     {
-      name: 'navLinks',
-      type: 'array',
-      label: 'Navigation links',
-      fields: [
-        { name: 'label', type: 'text', required: true },
-        { name: 'href', type: 'text', required: true },
-      ],
+      name: 'footerQuoteLabel',
+      type: 'text',
+      label: 'Footer quote link label',
+      defaultValue: 'Get a quote ⟶',
     },
     {
       name: 'email',
@@ -79,10 +139,28 @@ export const SiteSettings: GlobalConfig = {
       defaultValue: 'Perth, WA',
     },
     {
+      name: 'officeLabel',
+      type: 'text',
+      label: 'Office short label',
+      defaultValue: 'Shelley, Western Australia',
+    },
+    {
       name: 'coverage',
       type: 'text',
-      label: 'Coverage description',
+      label: 'Coverage (long)',
       defaultValue: 'Engaged on projects Australia-wide',
+    },
+    {
+      name: 'coverageLabel',
+      type: 'text',
+      label: 'Coverage short label',
+      defaultValue: 'Australia-wide',
+    },
+    {
+      name: 'officeHours',
+      type: 'text',
+      label: 'Office hours',
+      defaultValue: 'Mon – Fri, 7:30 am – 5:00 pm AWST',
     },
   ],
 }

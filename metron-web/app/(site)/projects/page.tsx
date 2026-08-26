@@ -1,8 +1,14 @@
+import type { Metadata } from 'next'
 import { getPayload } from '@/lib/payload'
 import { ProjectsClient, type CmsProject } from '@/components/home/ProjectsClient'
 import { InnerHero } from '@/components/ui/InnerHero'
 import { RevealWrapper } from '@/components/ui/RevealWrapper'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'Projects | Metron Engineering Services',
+  description: 'Selected projects across mining, industrial, infrastructure and commercial sectors. Structural, mechanical and civil engineering delivered across Australia.',
+}
 
 export default async function ProjectsPage() {
   let heroLabel = ''

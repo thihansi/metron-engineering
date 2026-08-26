@@ -1,22 +1,94 @@
+import type { Metadata } from 'next'
 import { getPayload } from '@/lib/payload'
 import { QuoteForm } from '@/components/home/QuoteForm'
 import { InnerHero } from '@/components/ui/InnerHero'
 import Link from 'next/link'
 
-const STEPS = [
-  { no: '1', text: 'We read the scope and come back with any clarifying questions.' },
-  { no: '2', text: 'You receive a proposed approach, programme and fee.' },
-  { no: '3', text: 'On acceptance, the engineer who quoted runs the job.' },
-]
+export const metadata: Metadata = {
+  title: 'Get a Quote | Metron Engineering Services',
+  description: 'Request an engineering quote from Metron Engineering Services. Send your scope, drawings or a short description and receive an approach and price within two business days.',
+}
+
+type Step = { no: string; text: string }
 
 export default async function QuotePage() {
   let email = ''
+  let heroBadgeLeft = 'Get a quote'
+  let heroBadgeRight = 'Response within two business days'
+  let heroHeading = 'Send us the scope.'
+  let heroBody =
+    'Drawings, sketches, specifications or a short description — whatever you have is enough to start. We will come back with an approach and a price.'
+  let formTitle = 'Project enquiry'
+  let formSubheading = 'Fields marked with an asterisk are required.'
+  let formSuccessHeading = 'Quote request received'
+  let formSuccessBody =
+    'Thanks for reaching out. We will review your project details and come back with an approach and a price — typically within two business days.'
+  let submitLabel = 'Send enquiry'
+  let services: string[] = []
+  let sidebarCompanyName = 'Metron Engineering Services Pty Ltd'
+  let sidebarOfficeLabel = 'Office'
+  let sidebarOfficeValue = 'Shelley, Western Australia'
+  let sidebarCoverageLabel = 'Coverage'
+  let sidebarCoverageValue = 'Projects supported Australia-wide'
+  let sidebarHoursLabel = 'Hours'
+  let sidebarHoursValue = 'Mon – Fri, 7:30 am – 5:00 pm AWST'
+  let stepsHeading = 'What happens next'
+  let steps: Step[] = []
+  let contactFallbackHeading = 'Not ready to quote?'
+  let contactFallbackBody =
+    'For a general question, our contact details and a short message form are on the contact page.'
+  let contactFallbackLabel = 'Contact details ⟶'
+  let contactFallbackHref = '/contact'
 
   try {
     const payload = await getPayload()
-    const settings = await payload.findGlobal({ slug: 'site-settings' })
-    const s = settings as Record<string, string>
-    email = s.email ?? ''
+    const [pg, settings] = await Promise.all([
+      payload.findGlobal({ slug: 'quote-page' }),
+      payload.findGlobal({ slug: 'site-settings' }),
+    ])
+    const p = pg as Record<string, unknown>
+    const str = (k: string, fallback = '') => (typeof p[k] === 'string' ? (p[k] as string) : fallback)
+
+    email = (settings as { email?: string })?.email ?? ''
+    heroBadgeLeft = str('heroBadgeLeft', heroBadgeLeft)
+    heroBadgeRight = str('heroBadgeRight', heroBadgeRight)
+    heroHeading = str('heroHeading', heroHeading)
+    heroBody = str('heroBody', heroBody)
+    formTitle = str('formTitle', formTitle)
+    formSubheading = str('formSubheading', formSubheading)
+    formSuccessHeading = str('formSuccessHeading', formSuccessHeading)
+    formSuccessBody = str('formSuccessBody', formSuccessBody)
+    submitLabel = str('submitLabel', submitLabel)
+    sidebarCompanyName = str('sidebarCompanyName', sidebarCompanyName)
+    sidebarOfficeLabel = str('sidebarOfficeLabel', sidebarOfficeLabel)
+    sidebarOfficeValue = str('sidebarOfficeValue', sidebarOfficeValue)
+    sidebarCoverageLabel = str('sidebarCoverageLabel', sidebarCoverageLabel)
+    sidebarCoverageValue = str('sidebarCoverageValue', sidebarCoverageValue)
+    sidebarHoursLabel = str('sidebarHoursLabel', sidebarHoursLabel)
+    sidebarHoursValue = str('sidebarHoursValue', sidebarHoursValue)
+    stepsHeading = str('stepsHeading', stepsHeading)
+    contactFallbackHeading = str('contactFallbackHeading', contactFallbackHeading)
+    contactFallbackBody = str('contactFallbackBody', contactFallbackBody)
+    contactFallbackLabel = str('contactFallbackLabel', contactFallbackLabel)
+    contactFallbackHref = str('contactFallbackHref', contactFallbackHref)
+
+    if (Array.isArray(p.serviceOptions)) {
+      services = p.serviceOptions
+        .map((row) => (row && typeof row === 'object' && typeof (row as { label?: unknown }).label === 'string'
+          ? (row as { label: string }).label
+          : null))
+        .filter((x): x is string => Boolean(x))
+    }
+    if (Array.isArray(p.steps)) {
+      steps = p.steps
+        .map((row) => {
+          if (!row || typeof row !== 'object') return null
+          const s = row as { no?: unknown; text?: unknown }
+          if (typeof s.no !== 'string' || typeof s.text !== 'string') return null
+          return { no: s.no, text: s.text }
+        })
+        .filter((x): x is Step => x !== null)
+    }
   } catch { /* CMS unavailable */ }
 
   const sidebarLabelStyle: React.CSSProperties = {
@@ -31,10 +103,10 @@ export default async function QuotePage() {
   return (
     <>
       <InnerHero
-        badgeLeft="Get a quote"
-        badgeRight="Response within two business days"
-        heading="Send us the scope."
-        body="Drawings, sketches, specifications or a short description — whatever you have is enough to start. We will come back with an approach and a price."
+        badgeLeft={heroBadgeLeft}
+        badgeRight={heroBadgeRight}
+        heading={heroHeading}
+        body={heroBody}
         headingMaxWidth={800}
         bodyMaxWidth={560}
         showOrb
@@ -42,25 +114,25 @@ export default async function QuotePage() {
 
       <section id="form" style={{ background: '#f5f7f9', padding: '100px 0 120px', borderBottom: '1px solid #e4e7eb' }}>
         <div className="mtr-wrap mtr-quote-outer">
-
-          {/* ── Form card ─────────────────────────────────────────────── */}
           <div style={{ background: '#fff', border: '1px solid #e4e7eb', padding: '44px 44px 48px' }}>
             <h2 style={{ margin: 0, fontFamily: 'var(--font-archivo)', fontWeight: 700, fontSize: '26px', letterSpacing: '-0.02em', color: '#0b1c33' }}>
-              Project enquiry
+              {formTitle}
             </h2>
             <p style={{ margin: '10px 0 34px', fontSize: '15.5px', lineHeight: 1.6, color: '#5a626c' }}>
-              Fields marked with an asterisk are required.
+              {formSubheading}
             </p>
-            <QuoteForm />
+            <QuoteForm
+              services={services}
+              successHeading={formSuccessHeading}
+              successBody={formSuccessBody}
+              submitLabel={submitLabel}
+            />
           </div>
 
-          {/* ── Sidebar ───────────────────────────────────────────────── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', position: 'sticky', top: '110px' }}>
-
-            {/* Card 1 — dark navy contact info */}
             <div style={{ background: '#0b1c33', padding: '34px 30px 36px' }}>
               <div style={{ fontFamily: 'var(--font-archivo)', fontWeight: 700, fontSize: '19px', color: '#fff' }}>
-                Metron Engineering Services Pty Ltd
+                {sidebarCompanyName}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '26px' }}>
                 <div>
@@ -74,33 +146,32 @@ export default async function QuotePage() {
                   </a>
                 </div>
                 <div>
-                  <div style={sidebarLabelStyle}>Office</div>
+                  <div style={sidebarLabelStyle}>{sidebarOfficeLabel}</div>
                   <div style={{ marginTop: '7px', fontSize: '15.5px', lineHeight: 1.6, color: 'rgba(255,255,255,0.82)' }}>
-                    Shelley, Western Australia
+                    {sidebarOfficeValue}
                   </div>
                 </div>
                 <div>
-                  <div style={sidebarLabelStyle}>Coverage</div>
+                  <div style={sidebarLabelStyle}>{sidebarCoverageLabel}</div>
                   <div style={{ marginTop: '7px', fontSize: '15.5px', lineHeight: 1.6, color: 'rgba(255,255,255,0.82)' }}>
-                    Projects supported Australia-wide
+                    {sidebarCoverageValue}
                   </div>
                 </div>
                 <div>
-                  <div style={sidebarLabelStyle}>Hours</div>
+                  <div style={sidebarLabelStyle}>{sidebarHoursLabel}</div>
                   <div style={{ marginTop: '7px', fontSize: '15.5px', lineHeight: 1.6, color: 'rgba(255,255,255,0.82)' }}>
-                    Mon – Fri, 7:30 am – 5:00 pm AWST
+                    {sidebarHoursValue}
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Card 2 — What happens next */}
             <div style={{ border: '1px solid #e4e7eb', background: '#fff', padding: '30px 28px 32px' }}>
               <div style={{ fontFamily: 'var(--font-archivo)', fontWeight: 700, fontSize: '16.5px', color: '#0b1c33' }}>
-                What happens next
+                {stepsHeading}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: '#e4e7eb', border: '1px solid #e4e7eb', marginTop: '18px' }}>
-                {STEPS.map(step => (
+                {steps.map(step => (
                   <div key={step.no} style={{ background: '#fff', padding: '15px 16px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
                     <span style={{
                       flexShrink: 0,
@@ -126,16 +197,15 @@ export default async function QuotePage() {
               </div>
             </div>
 
-            {/* Card 3 — Not ready to quote? */}
             <div style={{ border: '1px solid #e4e7eb', background: '#fff', padding: '26px 28px 28px' }}>
               <div style={{ fontFamily: 'var(--font-archivo)', fontWeight: 700, fontSize: '16.5px', color: '#0b1c33' }}>
-                Not ready to quote?
+                {contactFallbackHeading}
               </div>
               <p style={{ margin: '10px 0 18px', fontSize: '14.5px', lineHeight: 1.6, color: '#5a626c' }}>
-                For a general question, our contact details and a short message form are on the contact page.
+                {contactFallbackBody}
               </p>
               <Link
-                href="/contact"
+                href={contactFallbackHref}
                 className="mtr-btn-dark"
                 style={{
                   display: 'inline-flex',
@@ -149,10 +219,9 @@ export default async function QuotePage() {
                   color: '#0b1c33',
                 }}
               >
-                Contact details ⟶
+                {contactFallbackLabel}
               </Link>
             </div>
-
           </div>
         </div>
       </section>

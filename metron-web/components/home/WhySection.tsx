@@ -2,28 +2,11 @@ import { RevealWrapper } from '@/components/ui/RevealWrapper'
 import { SectionLabel } from '@/components/ui/SectionLabel'
 import { AnimatedCounter } from '@/components/ui/AnimatedCounter'
 
-const REASONS = [
-  {
-    no: 'A',
-    title: 'Analysis-led design',
-    body: 'Load paths verified in FEA before detailing, so the model that goes to fabrication is the model that was checked.',
-  },
-  {
-    no: 'B',
-    title: 'Fabrication-aware detailing',
-    body: 'Detailers who understand shop constraints reduce RFIs, rework and site fit-up issues.',
-  },
-  {
-    no: 'C',
-    title: 'Compliance as standard',
-    body: 'Documentation aligned to AS/NZS codes, WA mining regulations and client QA systems.',
-  },
-  {
-    no: 'D',
-    title: 'Perth-based, nationally engaged',
-    body: 'A local team with the mobility and systems to support projects anywhere in Australia.',
-  },
-]
+export interface WhyReason {
+  no: string
+  title: string
+  body: string
+}
 
 interface WhySectionProps {
   sectionNo: string
@@ -34,9 +17,20 @@ interface WhySectionProps {
   statSuffix: string
   statLabel: string
   imageUrl: string
+  reasons?: WhyReason[]
 }
 
-export function WhySection({ sectionNo, sectionTitle, subheading, body, stat, statSuffix, statLabel, imageUrl }: WhySectionProps) {
+export function WhySection({
+  sectionNo,
+  sectionTitle,
+  subheading,
+  body,
+  stat,
+  statSuffix,
+  statLabel,
+  imageUrl,
+  reasons = [],
+}: WhySectionProps) {
   return (
     <section className="mtr-section" style={{ position: 'relative', background: '#0b1c33', overflow: 'hidden' }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -70,7 +64,7 @@ export function WhySection({ sectionNo, sectionTitle, subheading, body, stat, st
           </div>
 
           <div className="mtr-2col" style={{ gap: '1px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.12)' }}>
-            {REASONS.map((r) => (
+            {reasons.map((r) => (
               <div
                 key={r.no}
                 className="mtr-reason-cell"

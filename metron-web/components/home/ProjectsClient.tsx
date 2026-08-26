@@ -169,19 +169,13 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
               const label = serviceLabel(p)
               const img = projectImage(p)
               return (
-                <div
+                <button
                   key={p.id}
-                  role="button"
-                  tabIndex={0}
+                  type="button"
                   onClick={() => open(globalIndex)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      open(globalIndex)
-                    }
-                  }}
                   className="mtr-card-project-page"
                   style={{
+                    appearance: 'none',
                     position: 'relative',
                     background: '#fff',
                     border: '1px solid #e4e7eb',
@@ -189,6 +183,10 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                     flexDirection: 'column',
                     overflow: 'hidden',
                     cursor: 'pointer',
+                    textAlign: 'left',
+                    width: '100%',
+                    padding: 0,
+                    font: 'inherit',
                   }}
                 >
                   <div style={{ position: 'relative', overflow: 'hidden', aspectRatio: '16/10', background: '#eef1f4' }}>
@@ -266,7 +264,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                       </span>
                     </div>
                   </div>
-                </div>
+                </button>
               )
             })}
           </div>

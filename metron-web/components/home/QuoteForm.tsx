@@ -1,23 +1,32 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { formLabelStyle } from '@/lib/formStyles'
 
-const SERVICES = [
-  'Structural Engineering',
-  'Mechanical Engineering',
-  'Civil Engineering',
-  'Architectural Engineering',
+const DEFAULT_SERVICES = [
+  'Structural',
+  'Mechanical',
+  'Civil',
+  'Architectural',
   'Drafting & CAD',
   'BIM Services',
   'FEA Analysis',
   'Steel Detailing',
-  'Metron Specials / Products',
+  'Metron Specials product',
   'Other',
 ]
 
 interface FileEntry {
+  id: number
   name: string
   size: string
+}
+
+interface QuoteFormProps {
+  services?: string[]
+  successHeading?: string
+  successBody?: string
+  submitLabel?: string
 }
 
 function formatSize(bytes: number): string {
@@ -25,33 +34,34 @@ function formatSize(bytes: number): string {
   return Math.max(1, Math.round(bytes / 1024)) + ' KB'
 }
 
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontFamily: 'var(--font-archivo)',
-  fontWeight: 600,
-  fontSize: '12.5px',
-  letterSpacing: '0.04em',
-  textTransform: 'uppercase',
-  color: '#7c848e',
-  marginBottom: '8px',
-}
-
 const inputStyle: React.CSSProperties = { height: '50px', padding: '0 15px' }
 
-export function QuoteForm() {
+export function QuoteForm({
+  services = DEFAULT_SERVICES,
+  successHeading = 'Quote request received',
+  successBody = 'Thanks for reaching out. We will review your project details and come back with an approach and a price — typically within two business days.',
+  submitLabel = 'Send enquiry',
+}: QuoteFormProps) {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
   const [selectedService, setSelectedService] = useState('')
   const [files, setFiles] = useState<FileEntry[]>([])
   const [dragging, setDragging] = useState(false)
+  const serviceOptions = services.length > 0 ? services : DEFAULT_SERVICES
+  const nextId = useRef(0)
 
   function addFiles(fileList: FileList | null) {
     if (!fileList) return
     const added: FileEntry[] = Array.from(fileList).map(f => ({
+      id: nextId.current++,
       name: f.name,
       size: formatSize(f.size),
     }))
     if (added.length) setFiles(prev => [...prev, ...added])
+  }
+
+  function removeFile(id: number) {
+    setFiles(prev => prev.filter(f => f.id !== id))
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -104,10 +114,10 @@ export function QuoteForm() {
     return (
       <div style={{ padding: '48px', background: '#f0f9f4', border: '1px solid #b8e6c8', textAlign: 'center' }}>
         <div style={{ fontFamily: 'var(--font-archivo)', fontWeight: 700, fontSize: '20px', color: '#0b1c33', marginBottom: '10px' }}>
-          Quote request received
+          {successHeading}
         </div>
         <p style={{ margin: 0, fontSize: '15px', color: '#5a626c' }}>
-          Thanks for reaching out. We will review your project details and come back with an approach and a price — typically within two business days.
+          {successBody}
         </p>
       </div>
     )
@@ -117,29 +127,29 @@ export function QuoteForm() {
     <form onSubmit={handleSubmit} noValidate className="mtr-quote-form">
       {/* Row 1 — Name + Company */}
       <div>
-        <label htmlFor="qf-name" style={labelStyle}>Name *</label>
+        <label htmlFor="qf-name" style={formLabelStyle}>Name *</label>
         <input id="qf-name" name="name" type="text" required placeholder="Full name" className="mtr-field" style={inputStyle} />
       </div>
       <div>
-        <label htmlFor="qf-company" style={labelStyle}>Company</label>
+        <label htmlFor="qf-company" style={formLabelStyle}>Company</label>
         <input id="qf-company" name="company" type="text" placeholder="Company or organisation" className="mtr-field" style={inputStyle} />
       </div>
 
       {/* Row 2 — Email + Phone */}
       <div>
-        <label htmlFor="qf-email" style={labelStyle}>Email *</label>
+        <label htmlFor="qf-email" style={formLabelStyle}>Email *</label>
         <input id="qf-email" name="email" type="email" required placeholder="name@company.com.au" className="mtr-field" style={inputStyle} />
       </div>
       <div>
-        <label htmlFor="qf-phone" style={labelStyle}>Phone</label>
+        <label htmlFor="qf-phone" style={formLabelStyle}>Phone</label>
         <input id="qf-phone" name="phone" type="tel" placeholder="04XX XXX XXX" className="mtr-field" style={inputStyle} />
       </div>
 
       {/* Service chip selector — full width */}
       <div style={{ gridColumn: '1 / -1' }}>
-        <div style={labelStyle}>Service required *</div>
+        <div style={formLabelStyle}>Service required *</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-          {SERVICES.map(s => {
+          {serviceOptions.map(s => {
             const on = selectedService === s
             return (
               <button
@@ -170,17 +180,17 @@ export function QuoteForm() {
 
       {/* Row 3 — Location + Timing */}
       <div>
-        <label htmlFor="qf-location" style={labelStyle}>Project location</label>
+        <label htmlFor="qf-location" style={formLabelStyle}>Project location</label>
         <input id="qf-location" name="projectLocation" type="text" placeholder="Town, state or site name" className="mtr-field" style={inputStyle} />
       </div>
       <div>
-        <label htmlFor="qf-timing" style={labelStyle}>Indicative timing</label>
+        <label htmlFor="qf-timing" style={formLabelStyle}>Indicative timing</label>
         <input id="qf-timing" name="indicativeTiming" type="text" placeholder="e.g. shutdown in October" className="mtr-field" style={inputStyle} />
       </div>
 
       {/* Description — full width */}
       <div style={{ gridColumn: '1 / -1' }}>
-        <label htmlFor="qf-desc" style={labelStyle}>Project description *</label>
+        <label htmlFor="qf-desc" style={formLabelStyle}>Project description *</label>
         <textarea
           id="qf-desc"
           name="description"
@@ -193,7 +203,7 @@ export function QuoteForm() {
 
       {/* File upload — full width */}
       <div style={{ gridColumn: '1 / -1' }}>
-        <div style={labelStyle}>Attach drawings or specifications</div>
+        <div style={formLabelStyle}>Attach drawings or specifications</div>
         <label
           className={`mtr-dropzone${dragging ? ' mtr-dropzone--active' : ''}`}
           onDragOver={e => { e.preventDefault(); setDragging(true) }}
@@ -216,10 +226,20 @@ export function QuoteForm() {
         </label>
         {files.length > 0 && (
           <div style={{ marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '1px', background: '#e4e7eb', border: '1px solid #e4e7eb' }}>
-            {files.map((f, i) => (
-              <div key={i} style={{ background: '#fff', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
+            {files.map((f) => (
+              <div key={f.id} style={{ background: '#fff', padding: '10px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
                 <span style={{ fontSize: '14.5px', color: '#26303b' }}>{f.name}</span>
-                <span style={{ fontFamily: 'var(--font-archivo)', fontWeight: 600, fontSize: '12.5px', color: '#7c848e', flexShrink: 0 }}>{f.size}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+                  <span style={{ fontFamily: 'var(--font-archivo)', fontWeight: 600, fontSize: '12.5px', color: '#7c848e' }}>{f.size}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeFile(f.id)}
+                    aria-label={`Remove ${f.name}`}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', color: '#7c848e', fontSize: '16px', lineHeight: 1 }}
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -254,7 +274,7 @@ export function QuoteForm() {
             clipPath: 'polygon(0 0,100% 0,100% 66%,calc(100% - 16px) 100%,0 100%)',
           }}
         >
-          {status === 'submitting' ? 'Submitting…' : 'Send enquiry'}
+          {status === 'submitting' ? 'Submitting…' : submitLabel}
         </button>
       </div>
     </form>

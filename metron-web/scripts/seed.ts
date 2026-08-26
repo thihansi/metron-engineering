@@ -27,6 +27,7 @@ import {
   PRODUCTS_PAGE,
   PROJECTS,
   PROJECTS_PAGE,
+  QUOTE_PAGE,
   SERVICES_PAGE,
   SITE_SETTINGS,
   TOOLS,
@@ -38,7 +39,6 @@ const COLLECTION_SLUGS = [
   'capabilities',
   'tools',
   'industries',
-  'services',
   'products',
   'projects',
 ] as const
@@ -106,6 +106,9 @@ async function seed() {
 
   await payload.updateGlobal({ slug: 'contact-page', data: CONTACT_PAGE })
   console.log('✓ contact-page')
+
+  await payload.updateGlobal({ slug: 'quote-page', data: QUOTE_PAGE })
+  console.log('✓ quote-page')
 
   // Admin user — create only if missing
   const adminPassword = process.env.SEED_ADMIN_PASSWORD

@@ -514,6 +514,9 @@ export const PRODUCT_ASSURANCES = [
 export const SITE_SETTINGS = {
   siteName: 'Metron Engineering Services',
   tagline: 'Engineering that holds up under load.',
+  metaTitle: 'Metron Engineering Services',
+  metaDescription:
+    'Structural, mechanical, civil and architectural engineering for mining, industrial, infrastructure and commercial clients.',
   footerBlurb: 'Perth based engineering, design, drafting and fabrication for projects across Australia.',
   copyrightLine: '© 2026 Metron Engineering Pty Ltd',
   footerNote: 'Designed and documented to AS/NZS standards',
@@ -521,6 +524,13 @@ export const SITE_SETTINGS = {
   phone: '+61 452 633 258',
   address: '11/24 Marjorie Avenue, Shelley WA 6148',
   location: 'Perth, WA',
+  officeLabel: 'Shelley, Western Australia',
+  coverage: 'Engaged on projects Australia-wide',
+  coverageLabel: 'Australia-wide',
+  officeHours: 'Mon – Fri, 7:30 am – 5:00 pm AWST',
+  quoteCtaLabel: 'Get a Quote',
+  quoteCtaHref: '/quote',
+  footerQuoteLabel: 'Get a quote ⟶',
   navLinks: [
     { label: 'Home', href: '/' },
     { label: 'About', href: '/about' },
@@ -528,6 +538,12 @@ export const SITE_SETTINGS = {
     { label: 'Products', href: '/products' },
     { label: 'Projects', href: '/projects' },
     { label: 'Contact', href: '/contact' },
+  ],
+  footerCompanyLinks: [
+    { label: 'About', href: '/about' },
+    { label: 'Services', href: '/services' },
+    { label: 'Projects', href: '/projects' },
+    { label: 'Products', href: '/products' },
   ],
   footerDisciplines: [
     { label: 'Structural', href: '/services' },
@@ -590,9 +606,15 @@ export const ABOUT_PAGE = {
   productCtaBody2:
     'Each product is developed using the same engineering approach we apply to our client projects, with a focus on functionality, durability and ease of use.',
   productCtaLabel: 'Explore Metron Products',
-  productCtaImageUrl: U('1681108212545-04cabe9cf771', 1100),
-  ctaHeading: 'Talk to the team that will do the work.',
-  ctaSubtitle: 'Get a quote — typically within two business days',
+  productCtaImageUrl: U('1581092160562-40aa08e78837', 1100),
+  ctaEyebrow: 'Final Call to Action',
+  ctaHeading: 'Have a project in mind?',
+  ctaBody:
+    'Talk to Metron Engineering about your engineering, design, drafting or fabrication requirements. Whether you need support with an initial concept, detailed engineering, fabrication documentation or a complete engineered solution, our team can help move your project forward.',
+  ctaPrimaryLabel: 'Discuss Your Project',
+  ctaPrimaryHref: '/quote',
+  ctaSecondaryLabel: 'View Our Projects',
+  ctaSecondaryHref: '/projects',
 }
 
 export const PRODUCTS_PAGE = {
@@ -661,9 +683,37 @@ export const HOME_PAGE = {
   whyStatSuffix: '%',
   whyStatLabel: 'Documentation issued on schedule',
   whyImageUrl: U('1591645321243-3adc1e75cfdc', 1800),
+  whyReasons: [
+    {
+      no: 'A',
+      title: 'Analysis-led design',
+      body: 'Load paths verified in FEA before detailing, so the model that goes to fabrication is the model that was checked.',
+    },
+    {
+      no: 'B',
+      title: 'Fabrication-aware detailing',
+      body: 'Detailers who understand shop constraints reduce RFIs, rework and site fit-up issues.',
+    },
+    {
+      no: 'C',
+      title: 'Compliance as standard',
+      body: 'Documentation aligned to AS/NZS codes, WA mining regulations and client QA systems.',
+    },
+    {
+      no: 'D',
+      title: 'Perth-based, nationally engaged',
+      body: 'A local team with the mobility and systems to support projects anywhere in Australia.',
+    },
+  ],
   ctaHeading: 'Send us the scope. We will come back with an approach and a price.',
   ctaSubtitle: 'Get a quote — typically within two business days',
+  ctaButtonLabel: 'Start an enquiry',
+  ctaButtonHref: '/contact',
   ctaNote: 'Shelley, Western Australia',
+  ctaFootNotes: [
+    { text: 'Australia-wide support' },
+    { text: 'AS/NZS compliant documentation' },
+  ],
 }
 
 export const SERVICES_PAGE = {
@@ -708,14 +758,99 @@ export const SERVICES_PAGE = {
 
 export const CONTACT_PAGE = {
   heroLabel: 'Contact',
+  heroBadgeRight: 'Shelley, Western Australia',
   heroHeading: 'Talk to an engineer.',
   heroBody:
     'Call, email or send a short message. If you already have a scope and want a price, the quote form collects everything we need in one pass.',
+  heroQuoteLabel: 'Request a quote ⟶',
+  detailCells: [
+    { label: 'Phone', valueKey: 'phone', note: 'Mon–Fri, 7:30am – 5:00pm AWST' },
+    { label: 'Email', valueKey: 'email', note: 'Replies within one business day' },
+    { label: 'Office', valueKey: 'officeLabel', note: 'Visits by appointment' },
+    { label: 'Coverage', valueKey: 'coverageLabel', note: 'Remote and on-site engineering support' },
+  ],
+  findUsHeading: 'Find us',
+  findUsBody: 'Visits are by appointment. For a specific person or team, see the routing below.',
+  routingRows: [
+    {
+      area: 'New work and quotes',
+      detail: 'Scope, drawings, programme and fees',
+      href: '/quote',
+      label: 'Quote form ⟶',
+      linkType: 'internal',
+    },
+    {
+      area: 'Metron Specials products',
+      detail: 'Availability, specifications and pricing',
+      href: '/products',
+      label: 'View range ⟶',
+      linkType: 'internal',
+    },
+    {
+      area: 'Live projects',
+      detail: 'Site queries, revisions and documentation',
+      href: 'mailto:',
+      label: 'Email us ⟶',
+      linkType: 'mailto',
+    },
+    {
+      area: 'Careers',
+      detail: 'Engineers and detailers — send a CV any time',
+      href: 'mailto:',
+      label: 'Email us ⟶',
+      linkType: 'mailto',
+    },
+  ],
   formSectionTitle: 'Send a message',
   formSubheading: 'For general questions.',
   formSuccessMessage: 'Message received. We will be in touch within one business day.',
-  quoteCtaHeading: 'Need a quote for a project?',
+  quoteCtaHeading: 'Have a scope ready?',
   quoteCtaBody:
-    'Use the dedicated quote form to give us the project scope, timing and any attachments. We will come back with an approach and a fixed price — typically within two business days.',
-  quoteCtaLabel: 'Get a quote',
+    'Send drawings, specifications or a short description and we will come back with an approach, programme and fee.',
+  quoteCtaLabel: 'Get a quote ⟶',
+  quoteCtaHref: '/quote',
+}
+
+export const QUOTE_PAGE = {
+  heroBadgeLeft: 'Get a quote',
+  heroBadgeRight: 'Response within two business days',
+  heroHeading: 'Send us the scope.',
+  heroBody:
+    'Drawings, sketches, specifications or a short description — whatever you have is enough to start. We will come back with an approach and a price.',
+  formTitle: 'Project enquiry',
+  formSubheading: 'Fields marked with an asterisk are required.',
+  formSuccessHeading: 'Quote request received',
+  formSuccessBody:
+    'Thanks for reaching out. We will review your project details and come back with an approach and a price — typically within two business days.',
+  submitLabel: 'Send enquiry',
+  serviceOptions: [
+    { label: 'Structural' },
+    { label: 'Mechanical' },
+    { label: 'Civil' },
+    { label: 'Architectural' },
+    { label: 'Drafting & CAD' },
+    { label: 'BIM Services' },
+    { label: 'FEA Analysis' },
+    { label: 'Steel Detailing' },
+    { label: 'Metron Specials product' },
+    { label: 'Other' },
+  ],
+  sidebarCompanyName: 'Metron Engineering Services Pty Ltd',
+  sidebarOfficeLabel: 'Office',
+  sidebarOfficeValue: 'Shelley, Western Australia',
+  sidebarCoverageLabel: 'Coverage',
+  sidebarCoverageValue: 'Projects supported Australia-wide',
+  sidebarHoursLabel: 'Hours',
+  sidebarHoursValue: 'Mon – Fri, 7:30 am – 5:00 pm AWST',
+  stepsHeading: 'What happens next',
+  steps: [
+    { no: '1', text: 'We read the scope and come back with any clarifying questions.' },
+    { no: '2', text: 'You receive a proposed approach, programme and fee.' },
+    { no: '3', text: 'On acceptance, the engineer who quoted runs the job.' },
+  ],
+  contactFallbackHeading: 'Not ready to quote?',
+  contactFallbackBody:
+    'For a general question, our contact details and a short message form are on the contact page.',
+  contactFallbackLabel: 'Contact details ⟶',
+  contactFallbackHref: '/contact',
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { formLabelStyle } from '@/lib/formStyles'
 
 interface ContactFormProps {
   successMessage: string
@@ -60,17 +61,6 @@ export function ContactForm({ successMessage }: ContactFormProps) {
     }
   }
 
-  const labelStyle: React.CSSProperties = {
-    display: 'block',
-    fontFamily: 'var(--font-archivo)',
-    fontWeight: 600,
-    fontSize: '12.5px',
-    letterSpacing: '0.04em',
-    textTransform: 'uppercase',
-    color: '#7c848e',
-    marginBottom: '8px',
-  }
-
   if (status === 'success') {
     return (
       <div style={{ padding: '40px', background: '#f0f9f4', border: '1px solid #b8e6c8', textAlign: 'center' }}>
@@ -84,7 +74,7 @@ export function ContactForm({ successMessage }: ContactFormProps) {
     <form onSubmit={handleSubmit} noValidate>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <div>
-          <label htmlFor="cf-name" style={labelStyle}>Name *</label>
+          <label htmlFor="cf-name" style={formLabelStyle}>Name *</label>
           <input
             id="cf-name"
             name="name"
@@ -96,7 +86,7 @@ export function ContactForm({ successMessage }: ContactFormProps) {
           />
         </div>
         <div>
-          <label htmlFor="cf-email" style={labelStyle}>Email *</label>
+          <label htmlFor="cf-email" style={formLabelStyle}>Email *</label>
           <input
             id="cf-email"
             name="email"
@@ -108,7 +98,7 @@ export function ContactForm({ successMessage }: ContactFormProps) {
           />
         </div>
         <div>
-          <label htmlFor="cf-message" style={labelStyle}>Message *</label>
+          <label htmlFor="cf-message" style={formLabelStyle}>Message *</label>
           <textarea
             id="cf-message"
             name="message"

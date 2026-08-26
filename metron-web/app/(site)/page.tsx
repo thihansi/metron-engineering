@@ -1,3 +1,5 @@
+import type { Metadata } from 'next'
+import type { Project, Product } from '@/types'
 import { getPayload } from '@/lib/payload'
 import { HeroSection } from '@/components/home/HeroSection'
 import { AboutSection } from '@/components/home/AboutSection'
@@ -7,6 +9,11 @@ import { ProjectsSection } from '@/components/home/ProjectsSection'
 import { ProductsSection } from '@/components/home/ProductsSection'
 import { WhySection } from '@/components/home/WhySection'
 import { CtaSection } from '@/components/home/CtaSection'
+
+export const metadata: Metadata = {
+  title: 'Metron Engineering Services | Perth Engineering Firm',
+  description: 'Structural, mechanical, civil and architectural engineering for mining, industrial, infrastructure and commercial clients across Australia.',
+}
 
 type HomeFields = {
   heroBadgeLeft: string
@@ -45,9 +52,13 @@ type HomeFields = {
   whyStatSuffix: string
   whyStatLabel: string
   whyImageUrl: string
+  whyReasons: { no: string; title: string; body: string }[]
   ctaHeading: string
   ctaSubtitle: string
   ctaNote: string
+  ctaButtonLabel: string
+  ctaButtonHref: string
+  ctaFootNotes: { text: string }[]
 }
 
 const emptyHome: HomeFields = {
@@ -87,9 +98,13 @@ const emptyHome: HomeFields = {
   whyStatSuffix: '',
   whyStatLabel: '',
   whyImageUrl: '',
+  whyReasons: [],
   ctaHeading: '',
   ctaSubtitle: '',
   ctaNote: '',
+  ctaButtonLabel: '',
+  ctaButtonHref: '/contact',
+  ctaFootNotes: [],
 }
 
 export default async function HomePage() {
@@ -105,10 +120,8 @@ export default async function HomePage() {
     imageUrl?: string
     order: number
   }[] = []
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let projects: any[] = []
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let products: any[] = []
+  let projects: Project[] = []
+  let products: Product[] = []
   let siteEmail = ''
 
   try {
@@ -132,8 +145,8 @@ export default async function HomePage() {
     tools = toolsRes.docs as typeof tools
     capabilities = capsRes.docs as typeof capabilities
     industries = indsRes.docs as typeof industries
-    projects = projsRes.docs
-    products = prodsRes.docs
+    projects = projsRes.docs as Project[]
+    products = prodsRes.docs as Product[]
     siteEmail = typeof settings?.email === 'string' ? settings.email : ''
   } catch {
     // CMS unavailable
@@ -195,8 +208,21 @@ export default async function HomePage() {
         statSuffix={hp.whyStatSuffix}
         statLabel={hp.whyStatLabel}
         imageUrl={hp.whyImageUrl}
+        reasons={Array.isArray(hp.whyReasons) ? hp.whyReasons : []}
       />
-      <CtaSection heading={hp.ctaHeading} subtitle={hp.ctaSubtitle} note={hp.ctaNote} email={siteEmail} />
+      <CtaSection
+        heading={hp.ctaHeading}
+        subtitle={hp.ctaSubtitle}
+        note={hp.ctaNote}
+        email={siteEmail}
+        buttonLabel={hp.ctaButtonLabel || 'Start an enquiry'}
+        buttonHref={hp.ctaButtonHref || '/contact'}
+        footNotes={
+          Array.isArray(hp.ctaFootNotes)
+            ? hp.ctaFootNotes.map((n) => (typeof n?.text === 'string' ? n.text : '')).filter(Boolean)
+            : []
+        }
+      />
     </>
   )
 }

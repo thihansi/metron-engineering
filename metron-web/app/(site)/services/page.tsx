@@ -1,8 +1,14 @@
+import type { Metadata } from 'next'
 import { getPayload } from '@/lib/payload'
 import { RevealWrapper } from '@/components/ui/RevealWrapper'
 import { InnerHero } from '@/components/ui/InnerHero'
 import { SectionLabel } from '@/components/ui/SectionLabel'
 import { CtaSection } from '@/components/home/CtaSection'
+
+export const metadata: Metadata = {
+  title: 'Engineering Services | Structural, Mechanical & Civil — Metron',
+  description: 'Structural, mechanical, civil and architectural engineering services. FEA analysis, steel detailing, BIM and drafting for Australian projects.',
+}
 
 export default async function ServicesPage() {
   let services: Record<string, string | number | { no: string; title: string; body: string }[]> = {}
